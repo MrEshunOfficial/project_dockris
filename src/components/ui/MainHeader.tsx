@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
@@ -17,22 +17,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
-import ProfileComponent from "./ProfileDisplay";
 
 const MainHeader: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
-  const [isEditing, setIsEditing] = useState(false);
 
   const isActive = (path: string): boolean => pathname === path;
 
@@ -43,7 +34,6 @@ const MainHeader: React.FC = () => {
     { name: "Location", path: "/Info/location" },
     { name: "Support", path: "/Info/support" },
   ];
-  const [profileImage, setProfileImage] = useState<File | null>(null);
 
   return (
     <motion.header
@@ -139,16 +129,9 @@ const MainHeader: React.FC = () => {
         </Popover>
         <Link href={"/Profile"}>
           <Avatar>
-            {profileImage ? (
-              <AvatarImage
-                src={URL.createObjectURL(profileImage)}
-                alt="Profile"
-              />
-            ) : (
-              <AvatarFallback>
-                <User className="h-6 w-6" />
-              </AvatarFallback>
-            )}
+            <AvatarFallback>
+              <User className="h-6 w-6" />
+            </AvatarFallback>
           </Avatar>
         </Link>
       </div>
