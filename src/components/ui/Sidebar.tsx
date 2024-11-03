@@ -1,209 +1,67 @@
 "use client";
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Toaster } from "@/components/ui/toaster";
 import {
   CalendarIcon,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   Home,
-  Star,
   Settings,
-  HelpCircle,
-  LogOut,
-  ShoppingCart,
-  DollarSign,
-  Users,
-  Group,
-  ShoppingBag,
-  LucideShoppingBag,
-  ServerIcon,
+  User,
   CogIcon,
   FanIcon,
   CalendarCheck,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { NextResponse } from "next/server";
-import { FaMoneyBill, FaQuestionCircle, FaShippingFast } from "react-icons/fa";
-import { GiBank } from "react-icons/gi";
-import { FcDebt, FcMoneyTransfer, FcPrivacy } from "react-icons/fc";
-import { RiRefund2Line } from "react-icons/ri";
 import { GrTask } from "react-icons/gr";
-import { logout } from "@/store/User/authSlice";
 
-import { fetchCurrentUser } from "@/store/User/authSlice";
-import { RootState, AppDispatch } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useSession } from "next-auth/react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
-import { toast } from "@/components/ui/use-toast";
-import { Toaster } from "@/components/ui/toaster";
-
-const DashboardNavigation = () => {
+const Sidebar = () => {
+  const { data: session } = useSession();
   const [isExpanded, setIsExpanded] = useState(true);
-  const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const router = useRouter();
+  const { profile } = useSelector((state: RootState) => state.userProfile);
+
   const pathname = usePathname();
 
   const toggleNavWidth = () => setIsExpanded(!isExpanded);
-  const toggleSubMenu = (name: string) => {
-    setActiveSubmenu(activeSubmenu === name ? null : name);
-  };
 
   const navWidth = isExpanded ? "18rem" : "5rem";
 
+  // Flattened navigation links
   const pageLinks = [
     {
-      name: "Schedules",
-      icon: <Home size={20} />,
-      subMenu: [
-        {
-          name: "Calendar",
-          path: "Schedules/Calendar",
-          icon: <CalendarIcon size={20} />,
-        },
-        {
-          name: "To-do List",
-          path: "Schedules/Todo",
-          icon: <GrTask size={16} />,
-        },
-        {
-          name: "Special Event",
-          path: "Schedules/SpecialEvent",
-          icon: <FanIcon size={16} />,
-        },
-        {
-          name: "My Appointments",
-          path: "Schedules/Appointments",
-          icon: <CalendarCheck size={16} />,
-        },
-        {
-          name: "Daily Routines",
-          path: "Schedules/Routines",
-          icon: <CogIcon size={16} />,
-        },
-      ],
+      name: "To-do List",
+      path: "/Features/Schedules/Todo",
+      icon: <GrTask size={20} color="green" />,
     },
     {
-      name: "Financial Management",
-      icon: <DollarSign size={20} />,
-      subMenu: [
-        {
-          name: "Budgeting",
-          path: "Financial/Budgets",
-          icon: <GiBank size={16} />,
-        },
-        {
-          name: "Expenses Tracking",
-          path: "Financial/Expenses",
-          icon: <FaMoneyBill size={16} />,
-        },
-        {
-          name: "Income Tracking",
-          path: "Financial/Income",
-          icon: <FcMoneyTransfer size={16} />,
-        },
-        {
-          name: "Debt Management",
-          path: "Financial/Debts",
-          icon: <FcDebt size={16} />,
-        },
-      ],
+      name: "Daily Routines",
+      path: "/Features/Schedules/Routines",
+      icon: <CogIcon size={20} color="red" />,
     },
     {
-      name: "Social Circles",
-      icon: <Users size={20} />,
-      subMenu: [
-        {
-          name: "Start a Conversation",
-          path: "conversations",
-          icon: <Group size={16} />,
-        },
-      ],
+      name: "My Appointments",
+      path: "/Features/Schedules/Appointments",
+      icon: <CalendarCheck size={20} color="orange" />,
     },
     {
-      name: "Shopping",
-      icon: <ShoppingCart size={20} />,
-      subMenu: [
-        {
-          name: "My Shopping List",
-          path: "Shopping/ShoppingList",
-          icon: <LucideShoppingBag size={16} />,
-        },
-        {
-          name: "My Wishlist",
-          path: "Shopping/WishList",
-          icon: <ShoppingBag size={16} />,
-        },
-      ],
+      name: "Special Event",
+      path: "/Features/Schedules/SpecialEvent",
+      icon: <FanIcon size={20} color="purple" />,
     },
     {
       name: "Settings",
-      path: "settings",
-      icon: <Settings size={20} />,
-      subMenu: [],
-    },
-    {
-      name: "Help",
-      icon: <HelpCircle size={20} />,
-      subMenu: [
-        {
-          name: "FAQ",
-          path: "help/faq",
-          icon: <FaQuestionCircle size={16} />,
-        },
-        {
-          name: "Terms of Service",
-          path: "help/terms",
-          icon: <ServerIcon size={16} />,
-        },
-        {
-          name: "Privacy Policy",
-          path: "help/privacy",
-          icon: <FcPrivacy size={16} />,
-        },
-        {
-          name: "Refund Policy",
-          path: "help/refund",
-          icon: <RiRefund2Line size={16} />,
-        },
-        {
-          name: "Shipping Policy",
-          path: "help/shipping",
-          icon: <FaShippingFast size={16} />,
-        },
-      ],
+      path: "/Features/settings",
+      icon: <Settings size={20} color="grey" />,
     },
   ];
-
-  const dispatch = useDispatch<AppDispatch>();
-  const { currentUser } = useSelector((state: RootState) => state.auth);
-
-  useEffect(() => {
-    if (!currentUser) {
-      dispatch(fetchCurrentUser());
-    }
-  }, [dispatch, currentUser]);
-
-  const onLogout = async () => {
-    try {
-      dispatch(logout());
-      router.push("/authclient/Login");
-      toast({
-        title: "Logged out Successfully",
-        description: "You have been logged out successfully.",
-        duration: 10000,
-      });
-    } catch (error) {
-      console.error("Logout error:", error);
-      return NextResponse.json(
-        { message: "Internal server error", success: false },
-        { status: 500 }
-      );
-    }
-  };
 
   return (
     <nav
@@ -212,125 +70,93 @@ const DashboardNavigation = () => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Header Section */}
       <div className="h-1/6 border-b w-full p-3 flex items-center dark:border-gray-600 gap-3 justify-center">
         {isExpanded ? (
-          <span className="w-full text-center font-semibold">
-            Welcome, {currentUser?.name}
-          </span>
+          <div className="w-full flex flex-col items-center gap-2 text-center font-semibold">
+            <p>Welcome, </p>
+            <p className="flex items-center justify-center gap-2 capitalize">
+              <span>
+                {profile?.fullName.firstName || session?.user?.name || "Guest"}
+              </span>
+              <span>
+                {profile?.fullName.lastName || session?.user?.name || "Guest"}
+              </span>
+            </p>
+          </div>
         ) : (
-          <Star size={24} />
+          <User size={24} />
         )}
       </div>
+
+      {/* Calendar Button */}
+      <Button
+        variant="link"
+        className="w-full rounded-md shadow-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-[3rem] text-white font-bold hover:bg-gradient-to-br transition duration-300"
+      >
+        <Link href="/Features" className="w-full flex items-center">
+          {isExpanded ? (
+            <span className="w-full flex items-center justify-start gap-2">
+              <CalendarIcon size={18} /> <span>Calendar</span>
+            </span>
+          ) : (
+            <span className="w-full flex items-center justify-center">
+              <CalendarIcon size={18} />
+            </span>
+          )}
+        </Link>
+      </Button>
+
+      {/* Navigation Links */}
       <ul className="flex-1 w-full p-3 flex flex-col gap-2 overflow-y-auto">
         {pageLinks.map((link) => (
           <li key={link.name} className="w-full">
-            <Button
-              variant="ghost"
-              className={`w-full justify-start gap-3 ${
-                isExpanded ? "px-3" : "px-0"
-              }`}
-              onClick={() =>
-                link.subMenu.length > 0 && toggleSubMenu(link.name)
-              }
-            >
-              {link.icon}
-              {isExpanded && (
-                <>
-                  <span>{link.name}</span>
-                  {link.subMenu.length > 0 && (
-                    <ChevronDown
-                      size={16}
-                      className={`ml-auto transition-transform duration-200 ${
-                        activeSubmenu === link.name
-                          ? "transform rotate-180"
-                          : ""
-                      }`}
-                    />
-                  )}
-                </>
-              )}
-            </Button>
-            {link.subMenu.length > 0 && (
-              <ul
-                className={`ml-6 mt-2 space-y-2 overflow-hidden transition-all duration-300 ease-in-out ${
-                  isExpanded && activeSubmenu === link.name
-                    ? "max-h-96"
-                    : "max-h-0"
-                }`}
+            <Link href={link.path}>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start gap-3 ${
+                  pathname === link.path ? "bg-gray-100 dark:bg-gray-800" : ""
+                } ${isExpanded ? "px-3" : "px-0"}`}
               >
-                {link.subMenu.map((subLink) => (
-                  <li key={subLink.name}>
-                    <Link
-                      href={`/Features/${subLink.path}`}
-                      className={`flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 py-2 px-3 rounded-md ${
-                        pathname === subLink.path
-                          ? "bg-gray-100 dark:bg-gray-800"
-                          : ""
-                      }`}
-                    >
-                      {isExpanded ? (
-                        <>
-                          {subLink.icon}
-                          <span>{subLink.name}</span>
-                        </>
-                      ) : (
-                        subLink.icon
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+                {link.icon}
+                {isExpanded && <span>{link.name}</span>}
+              </Button>
+            </Link>
           </li>
         ))}
       </ul>
+
+      {/* User Profile Section */}
       <div className="h-auto border-t w-full p-3 flex flex-col dark:border-gray-600 items-center">
-        {isExpanded ? (
+        {isExpanded && (
           <div className="w-full text-center">
             <div className="w-full flex items-center gap-3">
-              <Avatar className="h-9 w-9">
+              <Avatar>
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@username"
+                  src={
+                    profile?.profilePicture || session?.user?.image || undefined
+                  }
                 />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>
+                  <User className="h-9 w-9" />
+                </AvatarFallback>
               </Avatar>
               <div className="flex flex-col gap-3 items-start">
                 <p className="text-sm font-medium leading-none">
-                  {currentUser?.name}
+                  {profile?.username || session?.user?.name || "Guest"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground max-w-[10rem] truncate">
-                  {currentUser?.email}
+                  {profile?.email ||
+                    session?.user?.email ||
+                    "guest@example.com"}
                 </p>
               </div>
             </div>
-            <div className="w-full mt-4 flex justify-between text-xs text-gray-600">
-              <Link href="/privacy" className="hover:text-gray-900">
-                Privacy
-              </Link>
-              <Link href="/terms" className="hover:text-gray-900">
-                Terms
-              </Link>
-              <Link href="/support" className="hover:text-gray-900">
-                Support
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onLogout}
-                className="hover:text-gray-900 p-0 -mt-3"
-              >
-                <LogOut size={14} className="mr-1" />
-                Logout
-              </Button>
-            </div>
           </div>
-        ) : (
-          <Button variant="ghost" size="icon" onClick={onLogout}>
-            <LogOut size={20} />
-          </Button>
         )}
       </div>
+
+      {/* Toggle Button */}
       <Button
         variant="outline"
         onClick={toggleNavWidth}
@@ -340,10 +166,9 @@ const DashboardNavigation = () => {
       >
         {isExpanded ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
       </Button>
-
       <Toaster />
     </nav>
   );
 };
 
-export default DashboardNavigation;
+export default Sidebar;

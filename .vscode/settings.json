@@ -4,16 +4,25 @@
     "autotable",
     "clsx",
     "datepicker",
+    "datetime",
     "daygrid",
     "embla",
     "Eventmodel",
     "hookform",
+    "immer",
     "jspdf",
     "lucide",
     "multimonth",
+    "nextauth",
+    "nextjs",
+    "periodicsync",
     "planzen",
     "reduxjs",
     "schedulesmodel",
+    "setinterests",
+    "signin",
+    "signup",
+    "specialevent",
     "specialevents",
     "subdocument",
     "tailwindcss",
@@ -21,6 +30,9 @@
     "todos",
     "Uncategorized",
     "uuidv",
-    "virtuals"
-  ]
+    "virtuals",
+    "webpush",
+    "xtrasofcalendar"
+  ],
+  "files.autoSaveWhenNoErrors": true
 }

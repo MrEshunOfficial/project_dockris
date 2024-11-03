@@ -21,6 +21,15 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/Features/Financial/Income/income.tx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/Features/Financial/Income/income.tx",
+    "src/app/actions/index.ts",
+    "src/auth.ts",
+    "src/auth.config.tss"
+, "src/models/profileModel/profile.tx", "public/service-worker.js"  ],
   "exclude": ["node_modules"]
 }
