@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Sun, Sunset, Moon, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { RootState } from "@/store";
@@ -13,6 +12,26 @@ import {
   selectTodayCompletionStatus,
 } from "@/store/scheduleSlice/routineSlice";
 import { IRoutine, RoutineStatus } from "@/store/scheduleSlice/routineSlice";
+
+import {
+  Sun as SunIcon,
+  Sunset as SunsetIcon,
+  Moon as MoonIcon,
+  Calendar as CalendarIcon,
+} from "lucide-react";
+
+const Sun: React.FC<{ className?: string; size?: number }> = (props) => (
+  <SunIcon {...props} />
+);
+const Sunset: React.FC<{ className?: string; size?: number }> = (props) => (
+  <SunsetIcon {...props} />
+);
+const Moon: React.FC<{ className?: string; size?: number }> = (props) => (
+  <MoonIcon {...props} />
+);
+const Calendar: React.FC<{ className?: string; size?: number }> = (props) => (
+  <CalendarIcon {...props} />
+);
 
 type ColorType = "yellow" | "orange" | "indigo" | "green";
 
@@ -29,7 +48,10 @@ interface RoutineGroupProps {
   routines: RoutineData[];
 }
 
-const getColorClass = (color: ColorType, variant: string): string => {
+const getColorClass = (
+  color: keyof typeof colorMap,
+  variant: string
+): string => {
   const colorMap = {
     yellow: {
       50: "bg-yellow-50",
@@ -81,7 +103,14 @@ const getColorClass = (color: ColorType, variant: string): string => {
     },
   };
 
-  return colorMap[color][variant as keyof (typeof colorMap)[typeof color]];
+  // Check if variant is a valid key for the color object
+  if (variant in colorMap[color]) {
+    return colorMap[color][
+      variant as unknown as keyof (typeof colorMap)[typeof color]
+    ];
+  } else {
+    throw new Error(`Invalid variant: ${variant}`);
+  }
 };
 
 const RoutineGroup: React.FC<RoutineGroupProps> = ({
