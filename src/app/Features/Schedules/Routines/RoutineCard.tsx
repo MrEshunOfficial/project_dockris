@@ -9,8 +9,6 @@ import {
   ChevronUp,
   Edit,
   Trash2,
-  CheckCircle,
-  XCircle,
   CircleCheck,
   Circle,
 } from "lucide-react";
@@ -45,7 +43,6 @@ import {
   updateRoutineStatus,
   selectRoutineById,
   selectTodayCompletionStatus,
-  IRoutine,
   RoutineStatus,
   Frequency,
 } from "@/store/scheduleSlice/routineSlice";
@@ -57,7 +54,7 @@ import { deleteReminder, selectAllReminders } from "@/store/reminderSlice";
 import { ENTITY_TYPES } from "@/constants/entityTypes";
 import { useAppSelector } from "@/store/hooks";
 import { toast } from "@/components/ui/use-toast";
-import { RoutineFormData } from "@/store/type/routine";
+import { IRoutine } from "@/store/type/routine";
 
 const DayBadge: React.FC<{ day: string; active: boolean }> = ({
   day,
@@ -176,7 +173,6 @@ const RoutineCard: React.FC<RoutineCardProps> = ({ routineId }) => {
         updateCompletionStatus({
           routineId,
           date: new Date(),
-          completed: !todayCompletionStatus,
         })
       ).unwrap();
       setError(null);
@@ -185,14 +181,14 @@ const RoutineCard: React.FC<RoutineCardProps> = ({ routineId }) => {
     }
   };
 
-  const handleFormSubmit = async (updatedData: RoutineFormData) => {
+  const handleFormSubmit = async (updatedData: IRoutine) => {
     try {
       setIsUpdating(true);
       await dispatch(
         updateRoutine({
-          ...routine, // Preserve existing fields
-          ...updatedData, // Override with new data
-          _id: routineId, // Ensure correct ID
+          ...routine,
+          ...updatedData,
+          _id: routineId,
         })
       ).unwrap();
       setIsDialogOpen(false);
@@ -260,13 +256,13 @@ const RoutineCard: React.FC<RoutineCardProps> = ({ routineId }) => {
       case RoutineStatus.ACTIVE:
         return "default";
       case RoutineStatus.PAUSED:
-        return "warning";
+        return "destructive";
       case RoutineStatus.COMPLETED:
-        return "success";
+        return "default";
       case RoutineStatus.INACTIVE:
-        return "secondary";
+        return "default";
       default:
-        return "secondary";
+        return "default";
     }
   };
 

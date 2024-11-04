@@ -443,16 +443,24 @@ export const selectCompletedRoutines = (state: RootState) =>
 export const selectPausedRoutines = (state: RootState) => 
   state.routines.filteredRoutines.filter(routine => routine.status === RoutineStatus.PAUSED);
 
-export const selectTodayCompletionStatus = (state: RootState, routineId: string) => {
+export const selectTodayCompletionStatus = (
+  state: RootState,
+  routineId: string
+): boolean => {
   const routine = selectRoutineById(state, routineId);
+  
   if (routine) {
     const today = new Date().toDateString();
-    return routine.dailyCompletionStatus.find(status => 
-      new Date(status.date).toDateString() === today
-    )?.completed || false;
+    // Find today's completion status, if available
+    const todayStatus = routine.dailyCompletionStatus.find(status => 
+      status.date && new Date(status.date).toDateString() === today
+    );
+    return todayStatus?.completed ?? false; // Use nullish coalescing for default `false`
   }
-  return false;
+  
+  return false; // Default return if no routine or today's status is found
 };
+
 
 export const {
   setSelectedUser,

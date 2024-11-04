@@ -58,6 +58,8 @@ export interface RoutineFormData {
   tags?: string[];
   status?: RoutineStatus;
   category: string,
+  dailyCompletionStatus: { date: Date; completed: boolean }[];
+  
 }
 
 export interface RoutineFormModalProps {
