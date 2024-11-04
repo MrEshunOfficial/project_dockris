@@ -18,12 +18,10 @@ import {
 } from "@/store/scheduleSlice/eventSlice";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  DrawerDescription,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { AppDispatch, RootState } from "@/store";
@@ -44,7 +42,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SortAsc, SortDesc, Grid, List, Plus, BarChart2 } from "lucide-react";
+import { SortAsc, SortDesc, Grid, List, Plus } from "lucide-react";
 import EventForm from "./EventForm";
 import EventCard from "./EventCard";
 import EventDashboard from "./EventDashboard";
@@ -59,9 +57,8 @@ const EventList: React.FC = () => {
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [currentPage, setCurrentPage] = useState(1);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
-  const [isDashboardDialogOpen, setIsDashboardDialogOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<EventDocument | null>(
-    null
+  const [selectedEvent, setSelectedEvent] = useState<EventDocument | undefined>(
+    undefined
   );
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,14 +84,16 @@ const EventList: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const handleSubmit = (data: EventDocument) => {
+  const handleSubmit = (
+    data: Omit<EventDocument, "_id" | "createdAt" | "updatedAt" | "userId">
+  ) => {
     if (selectedEvent) {
-      dispatch(updateEvent({ ...data, _id: selectedEvent._id }));
+      dispatch(updateEvent({ id: selectedEvent._id, data }));
     } else {
       dispatch(addEvent(data));
     }
     setIsEventDialogOpen(false);
-    setSelectedEvent(null);
+    setSelectedEvent(undefined);
   };
 
   const handleEdit = (event: EventDocument) => {
@@ -180,7 +179,7 @@ const EventList: React.FC = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="startTime">Date</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="title">Title</SelectItem>
               <SelectItem value="type">Type</SelectItem>
               <SelectItem value="status">Status</SelectItem>
             </SelectContent>
@@ -229,7 +228,7 @@ const EventList: React.FC = () => {
           <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
             <DialogTrigger asChild>
               <Button
-                onClick={() => setSelectedEvent(null)}
+                onClick={() => setSelectedEvent(undefined)}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 <Plus size={20} className="mr-2" /> New Event

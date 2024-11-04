@@ -123,7 +123,7 @@ const EventDashboard: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium truncate">{event.name}</h3>
+                    <h3 className="font-medium truncate">{event.title}</h3>
                     <p className="text-sm text-gray-500">
                       {format(new Date(event.startTime), "h:mm a")}
                     </p>

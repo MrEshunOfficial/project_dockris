@@ -7,7 +7,7 @@ export const eventStatuses = ["draft", "pending", "confirmed", "cancelled", "com
 export type EventType = typeof eventTypes[number];
 export type EventStatus = typeof eventStatuses[number];
 
-// Base interface without Document properties
+// Base interface without _id and Document properties
 export interface IEventBase {
   userId: string;
   title: string;
@@ -35,6 +35,7 @@ export interface IEvent extends IEventBase, Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
 
 const EventSchema = new Schema<IEvent>(
   {

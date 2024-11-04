@@ -39,7 +39,7 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSession } from "next-auth/react";
@@ -50,19 +50,29 @@ import {
   eventTypes,
   eventStatuses,
   EventDocument,
+  EventType,
+  EventStatus,
 } from "@/store/scheduleSlice/eventSlice";
+import { AppDispatch } from "@/store";
 
-const defaultEventValues = {
-  status: "pending",
+// Define form values type
+interface EventFormValues
+  extends Omit<EventDocument, "_id" | "createdAt" | "updatedAt"> {
+  startTime: Date;
+  endTime: Date;
+}
+
+const defaultEventValues: Partial<EventFormValues> = {
+  status: "pending" as EventStatus,
   startTime: new Date(),
   endTime: new Date(),
   isPublic: true,
-  type: "conference",
+  type: "conference" as EventType,
   tags: [],
   categories: [],
   eventLinks: [],
   registeredAttendees: 0,
-  capacity: null,
+  capacity: 0,
 };
 
 interface EventFormProps {
@@ -72,13 +82,13 @@ interface EventFormProps {
 }
 
 const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: session } = useSession();
   const userId = session?.user?.id;
 
-  const form = useForm({
+  const form = useForm<EventFormValues>({
     defaultValues: {
       ...defaultEventValues,
       ...event,
@@ -93,25 +103,21 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
     }
   }, [userId, form]);
 
-  const validateForm = async (data: any) => {
+  const validateForm = async (data: EventFormValues): Promise<string[]> => {
     const errors: string[] = [];
 
     if (new Date(data.endTime) <= new Date(data.startTime)) {
       errors.push("End time must be after start time");
     }
 
-    if (data.registeredAttendees > data.capacity) {
+    if ((data?.registeredAttendees ?? 0) > (data?.capacity ?? 0)) {
       errors.push("Registered attendees cannot exceed capacity");
-    }
-
-    if (data.price && !data.currency) {
-      errors.push("Currency is required when price is set");
     }
 
     return errors;
   };
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: EventFormValues) => {
     if (!userId) {
       toast({
         title: "Error",
@@ -153,14 +159,15 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
         title: event ? "Event Updated" : "Event Created",
         description: `Successfully ${
           event ? "updated" : "created"
-        } the event "${result.name}"`,
+        } the event "${result.title}"`,
       });
 
       onSubmit?.(result);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to save event",
+        description:
+          error instanceof Error ? error.message : "Failed to save event",
         variant: "destructive",
       });
     } finally {
@@ -215,7 +222,16 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                     <Calendar className="mr-2 h-4 w-4 opacity-70" />
                     <DatePicker
                       selected={field.value}
-                      onChange={(date: Date) => field.onChange(date)}
+                      onChange={(
+                        date: Date | null,
+                        event?:
+                          | React.MouseEvent<HTMLElement>
+                          | React.KeyboardEvent<HTMLElement>
+                      ) => {
+                        if (date) {
+                          field.onChange(date);
+                        }
+                      }}
                       showTimeSelect
                       dateFormat="MMMM d, yyyy h:mm aa"
                       className="w-full rounded-md border p-2"
@@ -239,11 +255,20 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSubmit, onCancel }) => {
                     <Clock className="mr-2 h-4 w-4 opacity-70" />
                     <DatePicker
                       selected={field.value}
-                      onChange={(date: Date) => field.onChange(date)}
+                      onChange={(
+                        date: Date | null,
+                        event?:
+                          | React.MouseEvent<HTMLElement>
+                          | React.KeyboardEvent<HTMLElement>
+                      ) => {
+                        if (date) {
+                          field.onChange(date);
+                        }
+                      }}
                       showTimeSelect
                       dateFormat="MMMM d, yyyy h:mm aa"
                       className="w-full rounded-md border p-2"
-                      minDate={form.getValues("startTime")}
+                      minDate={form.getValues("startTime") || new Date()} // Fallback to current date if "startTime" is not defined
                     />
                   </div>
                 </FormControl>

@@ -59,7 +59,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit }) => {
   const reminder = useAppSelector((state) =>
     selectAllReminders(state).find(
       (r) =>
-        r.entityType === (ENTITY_TYPES.EVENTS as const) &&
+        r.entityType === (ENTITY_TYPES.SPECIAL_EVENT) &&
         r.entityId === event._id
     )
   );
@@ -117,11 +117,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit }) => {
   const getStatusBadgeVariant = (status: EventStatus) => {
     switch (status) {
       case "draft":
-        return "secondary";
+        return "default";
       case "pending":
-        return "warning";
+        return "destructive";
       case "confirmed":
-        return "success";
+        return "default";
       case "cancelled":
         return "destructive";
       case "completed":
