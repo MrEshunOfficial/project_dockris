@@ -5,7 +5,7 @@ import { RootState } from "@/store";
 import RoutineCard from "./RoutineCard";
 import { RoutineHeader } from "./RoutineHeader";
 
-export const RoutinePage: React.FC = () => {
+const RoutinePage: React.FC = () => {
   const allRoutines = useSelector(
     (state: RootState) => state.routines.filteredRoutines
   );
