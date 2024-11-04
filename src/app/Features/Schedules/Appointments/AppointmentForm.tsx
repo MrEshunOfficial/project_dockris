@@ -179,7 +179,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
                 render={({ field }) => (
                   <DatePicker
                     selected={field.value}
-                    onChange={(date: Date) => field.onChange(date)}
+                    onChange={(date: Date | null) => field.onChange(date)} // Adjusted to allow `Date | null`
                     showTimeSelect
                     dateFormat="MMMM d, yyyy h:mm aa"
                     className="w-full p-2 border rounded"
