@@ -1,48 +1,6 @@
 import axiosInstance from '@/lib/axiosInstance';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-
-
-export enum ReminderType {
-  NOTIFICATION = 'notification',
-  EMAIL = 'email',
-  SMS = 'sms',
-}
-
-export enum AppointmentStatus {
-  PENDING = 'Pending',
-  CONFIRMED = 'Confirmed',
-  CANCELLED = 'Cancelled',
-}
-
-export enum PrivacyType {
-  PRIVATE = 'private',
-  SHARED = 'shared',
-}
-
-export interface Appointment {
-  _id: string;
-  userId: string;
-  title: string;
-  dueDateTime: Date;
-  location: string;
-  notes?: string;
-  attendees: {
-    type: 'individual' | 'count';
-    individuals?: string[];
-    count?: number;
-  };
-  reminder: {
-    type: ReminderType;
-    interval: string;
-  };
-  privacy: PrivacyType;
-  recurring: boolean;
-  recurrencePattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
-  status: AppointmentStatus;
-  links: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { Appointment, AppointmentStatus, PrivacyType, ReminderType } from '../type/reminderType';
 
 interface AppointmentsState {
   appointments: Appointment[];

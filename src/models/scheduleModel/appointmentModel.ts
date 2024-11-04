@@ -82,6 +82,10 @@ const appointmentSchema = new Schema<IAppointment, AppointmentModel, Appointment
     },
     notes: { 
       type: String,
+
+
+
+
       validate: {
         validator: (value: string) => !value || validator.isLength(value, { max: 1000 }),
         message: 'notes must not exceed 1000 characters'

@@ -33,16 +33,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-
 import { AppDispatch, RootState } from "@/store";
-import { z } from "zod";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import {
@@ -50,53 +43,15 @@ import {
   updateAppointment,
   selectStatus,
   selectError,
+} from "@/store/scheduleSlice/appointmentSlice";
+import { useSession } from "next-auth/react";
+import {
+  Appointment,
+  AppointmentFormData,
   AppointmentStatus,
   PrivacyType,
   ReminderType,
-  Appointment,
-} from "@/store/scheduleSlice/appointmentSlice";
-import { useSession } from "next-auth/react";
-
-const appointmentSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(255, "Title must be less than 255 characters"),
-  dueDateTime: z.date(),
-  location: z
-    .string()
-    .min(1, "Location is required")
-    .max(255, "Location must be less than 255 characters"),
-  notes: z
-    .string()
-    .max(1000, "Notes must be less than 1000 characters")
-    .optional(),
-  attendees: z.object({
-    type: z.enum(["individual", "count"]),
-    individuals: z.array(z.string().email("Invalid email address")).optional(),
-    count: z
-      .number()
-      .min(1, "Attendee count must be a positive number")
-      .optional(),
-  }),
-  reminder: z.object({
-    type: z.enum(["notification", "email", "sms"] as const),
-    interval: z
-      .string()
-      .min(1, "Reminder interval is required")
-      .max(50, "Interval must be less than 50 characters"),
-  }),
-  privacy: z.enum(["private", "shared"] as const),
-  recurring: z.boolean(),
-  recurrencePattern: z
-    .enum(["daily", "weekly", "monthly", "yearly"])
-    .optional(),
-  status: z.enum(["Pending", "Confirmed", "Cancelled"] as const),
-  links: z.array(z.string().url("Invalid URL")).default([]),
-  userId: z.string(),
-});
-
-type AppointmentFormData = z.infer<typeof appointmentSchema>;
+} from "@/store/type/reminderType";
 
 interface AppointmentFormProps {
   appointment?: Appointment | null;
@@ -112,7 +67,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const error = useSelector(selectError);
   const [currentPage, setCurrentPage] = useState(1);
   const { data: session } = useSession();
-  const userId = session?.user?.id;
+  const userId = session?.user?.id || "";
+  const [links, setLinks] = useState<string[]>([]);
 
   const {
     control,
@@ -122,6 +78,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
     formState: { errors },
   } = useForm<AppointmentFormData>({
     defaultValues: {
+      userId,
       title: "",
       dueDateTime: new Date(),
       location: "",
@@ -132,7 +89,6 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       recurring: false,
       status: AppointmentStatus.PENDING,
       links: [],
-      userId: userId,
     },
   });
 
@@ -144,12 +100,12 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
         ...appointment,
         dueDateTime: new Date(appointment.dueDateTime),
       });
+      setLinks(appointment.links);
     }
   }, [appointment, reset]);
 
   const watchAttendeeType = watch("attendees.type");
   const watchRecurring = watch("recurring");
-  const [links, setLinks] = useState<string[]>([]);
 
   const onSubmit = async (data: AppointmentFormData) => {
     try {
@@ -157,13 +113,13 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
         throw new Error("User ID is not available");
       }
 
-      const appointmentData = {
+      const appointmentData: AppointmentFormData = {
         ...data,
         userId,
         links,
       };
 
-      if (appointment) {
+      if (appointment?._id) {
         await dispatch(
           updateAppointment({ id: appointment._id, data: appointmentData })
         ).unwrap();
@@ -179,10 +135,9 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
         });
       }
 
-      if (onSuccess) {
-        onSuccess();
-      }
-    } catch (error: any) {
+      onSuccess?.();
+    } catch (err) {
+      const error = err as Error;
       toast({
         title: "Error",
         description: error.message || "Failed to save appointment",
