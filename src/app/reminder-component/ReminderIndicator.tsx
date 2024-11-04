@@ -50,17 +50,22 @@ import { EventDocument } from "@/store/scheduleSlice/eventSlice";
 
 interface TodoReminderProps {
   todo: ITodo;
+  reminder?: ReminderState;
 }
 
 interface RoutineReminderProps {
   routine: IRoutine;
+  reminder?: ReminderState;
 }
 
 interface AppointmentReminderProps {
   appointment: IAppointment;
+  reminder?: ReminderState;
 }
+
 interface EventsReminderProps {
   specialevent: EventDocument;
+  reminder?: ReminderState;
 }
 
 type ReminderIndicatorProps =
@@ -77,6 +82,7 @@ const getEntityInfo = (props: ReminderIndicatorProps) => {
       entity: props.todo,
       title: props.todo.title,
       description: props.todo.description,
+      existingReminder: props.reminder,
     };
   }
   if ("routine" in props) {
@@ -86,6 +92,7 @@ const getEntityInfo = (props: ReminderIndicatorProps) => {
       entity: props.routine,
       title: props.routine.title,
       description: props.routine.description,
+      existingReminder: props.reminder,
     };
   }
   if ("appointment" in props) {
@@ -95,15 +102,17 @@ const getEntityInfo = (props: ReminderIndicatorProps) => {
       entity: props.appointment,
       title: props.appointment.title,
       description: props.appointment.notes,
+      existingReminder: props.reminder,
     };
   }
   if ("specialevent" in props) {
     return {
-      entityType: ENTITY_TYPES.EVENTS as EntityType,
+      entityType: ENTITY_TYPES.SPECIAL_EVENT as EntityType,
       entityId: props.specialevent._id,
       entity: props.specialevent,
       title: props.specialevent.title,
       description: props.specialevent.description,
+      existingReminder: props.reminder,
     };
   }
   throw new Error("Invalid entity type provided");

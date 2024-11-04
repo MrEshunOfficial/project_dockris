@@ -6,7 +6,7 @@ import { RootState } from '@/store';
 const BASE_REMINDER_URL = '/api/reminder';
 
 type ReminderStatus = 'pending' | 'completed' | 'missed';
-type EntityType = 'todo' | 'routine' | 'appointment';
+type EntityType = 'todo' | 'routine' | 'appointment'|'specialevent';
 
 // Define a separate interface for the Redux state without Mongoose Document properties
 export interface ReminderState {

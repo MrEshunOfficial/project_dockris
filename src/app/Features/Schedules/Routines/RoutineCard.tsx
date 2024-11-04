@@ -54,7 +54,7 @@ import { deleteReminder, selectAllReminders } from "@/store/reminderSlice";
 import { ENTITY_TYPES } from "@/constants/entityTypes";
 import { useAppSelector } from "@/store/hooks";
 import { toast } from "@/components/ui/use-toast";
-import { IRoutine } from "@/store/type/routine";
+import { IRoutine, RoutineFormData } from "@/store/type/routine";
 
 const DayBadge: React.FC<{ day: string; active: boolean }> = ({
   day,
@@ -181,16 +181,31 @@ const RoutineCard: React.FC<RoutineCardProps> = ({ routineId }) => {
     }
   };
 
-  const handleFormSubmit = async (updatedData: IRoutine) => {
+  const handleFormSubmit = async (formData: RoutineFormData) => {
     try {
       setIsUpdating(true);
+
+      // Convert string dates to Date objects if needed
+      const processedData = {
+        ...formData,
+        startTime: new Date(formData.startTime),
+        endTime: new Date(formData.endTime),
+        status: formData.status || routine.status, // Use existing status if not provided
+      };
+
       await dispatch(
         updateRoutine({
-          ...routine,
-          ...updatedData,
+          ...routine, // Keep existing routine data
+          ...processedData, // Override with form data
           _id: routineId,
+          // Preserve system-managed fields
+          dailyCompletionStatus: routine.dailyCompletionStatus,
+          streak: routine.streak,
+          createdAt: routine.createdAt,
+          updatedAt: routine.updatedAt,
         })
       ).unwrap();
+
       setIsDialogOpen(false);
       setError(null);
     } catch (error) {

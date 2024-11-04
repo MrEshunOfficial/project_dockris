@@ -98,7 +98,7 @@ const getEntityDateTime = (
       return todo?.dueDateTime ? safeParseDate(todo.dueDateTime) : new Date();
     case ENTITY_TYPES.ROUTINE:
       return routine?.startTime ? safeParseDate(routine.startTime) : new Date();
-    case ENTITY_TYPES.EVENTS:
+    case ENTITY_TYPES.SPECIAL_EVENT:
       return specialevent?.startTime
         ? safeParseDate(specialevent.startTime)
         : new Date();
@@ -118,7 +118,7 @@ const getEntityTitle = (
       return todo?.title || "";
     case ENTITY_TYPES.ROUTINE:
       return routine?.title || "";
-    case ENTITY_TYPES.EVENTS:
+    case ENTITY_TYPES.SPECIAL_EVENT:
       return specialevent?.title || "";
     default:
       return "";
@@ -136,7 +136,7 @@ const getEntityDescription = (
       return todo?.description || "";
     case ENTITY_TYPES.ROUTINE:
       return routine?.description || "";
-    case ENTITY_TYPES.EVENTS:
+    case ENTITY_TYPES.SPECIAL_EVENT:
       return specialevent?.description || "";
     default:
       return "";

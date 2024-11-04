@@ -24,7 +24,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { AnimatePresence } from "framer-motion";
 import { Loader2, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -424,7 +423,6 @@ const RoutineForm: React.FC<RoutineFormProps> = ({
                   className={
                     currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
                   }
-                  disabled={currentPage === 1}
                 />
               </PaginationItem>
               {[1, 2, 3].map((page) => (
@@ -445,7 +443,6 @@ const RoutineForm: React.FC<RoutineFormProps> = ({
                   className={
                     currentPage === 3 ? "opacity-50 cursor-not-allowed" : ""
                   }
-                  disabled={currentPage === 3}
                 />
               </PaginationItem>
             </PaginationContent>

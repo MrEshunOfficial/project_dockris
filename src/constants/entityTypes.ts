@@ -2,7 +2,7 @@ export const ENTITY_TYPES = {
   TODO: 'todo',
   ROUTINE: 'routine',
   APPOINTMENT: 'appointment',
-  EVENTS: 'specialevent'
+  SPECIAL_EVENT: 'specialevent'  // Using SPECIAL_EVENT to be more explicit
 } as const;
 
 export type EntityType = typeof ENTITY_TYPES[keyof typeof ENTITY_TYPES];
