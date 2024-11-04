@@ -186,11 +186,11 @@ const AppointmentList = () => {
             <div className="flex items-center mt-2">
               <Users size={16} className="mr-2" />
               <span className="text-sm text-gray-600">
-                {appointment.attendees.type === "individual"
+                {appointment?.attendees?.type === "individual"
                   ? `${
                       appointment.attendees.individuals?.length || 0
                     } attendees`
-                  : `${appointment.attendees.count || 0} attendees`}
+                  : `${appointment?.attendees?.count || 0} attendees`}
               </span>
             </div>
             <div className="flex items-center mt-1">
