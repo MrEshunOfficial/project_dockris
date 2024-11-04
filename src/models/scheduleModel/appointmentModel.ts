@@ -1,24 +1,7 @@
 //appointment model
+import { AppointmentStatus, PrivacyType, ReminderType } from '@/store/type/reminderType';
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import validator from 'validator';
-
-export enum ReminderType {
-  NOTIFICATION = 'notification',
-  EMAIL = 'email',
-  SMS = 'sms',
-}
-
-export enum AppointmentStatus {
-  PENDING = 'Pending',
-  CONFIRMED = 'Confirmed',
-  CANCELLED = 'Cancelled',
-}
-
-export enum PrivacyType {
-  PRIVATE = 'private',
-  SHARED = 'shared',
-}
-
 export interface IAppointment extends Document {
   _id: string;
   userId: string;

@@ -1,6 +1,6 @@
 import axiosInstance from '@/lib/axiosInstance';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Appointment, AppointmentStatus, PrivacyType, ReminderType } from '../type/reminderType';
+import { Appointment, AppointmentStatus, PrivacyType } from '../type/reminderType';
 
 interface AppointmentsState {
   appointments: Appointment[];

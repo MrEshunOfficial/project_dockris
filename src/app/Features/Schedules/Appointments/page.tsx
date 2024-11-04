@@ -35,10 +35,9 @@ import {
   selectSearchTerm,
   selectSortBy,
   selectSortOrder,
-  AppointmentStatus,
-  Appointment,
   fetchAppointmentById,
 } from "@/store/scheduleSlice/appointmentSlice";
+import { Appointment, AppointmentStatus } from "@/store/type/reminderType";
 
 const ITEMS_PER_PAGE = 10;
 

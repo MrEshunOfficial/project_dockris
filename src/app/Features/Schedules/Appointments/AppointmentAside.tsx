@@ -2,11 +2,7 @@ import React from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, BarChart2 } from "lucide-react";
-
-import {
-  Appointment,
-  AppointmentStatus,
-} from "@/store/scheduleSlice/appointmentSlice";
+import { Appointment, AppointmentStatus } from "@/store/type/reminderType";
 
 interface AppointmentAsideProps {
   appointments: Appointment[];
