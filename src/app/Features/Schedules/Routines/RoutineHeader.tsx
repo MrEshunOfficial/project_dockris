@@ -139,11 +139,12 @@ export const RoutineHeader: React.FC = () => {
   const handleViewModeChange = (mode: "grid" | "list") => {
     dispatch(setViewMode(mode));
   };
-
   const handleFormSubmit = async (
     data: Omit<IRoutine, "_id" | "createdAt" | "updatedAt">
   ) => {
-    await dispatch(addRoutine(data));
+    await dispatch(
+      addRoutine({ ...data, createdAt: new Date(), updatedAt: new Date() })
+    );
     setIsRoutineFormOpen(false);
   };
 
@@ -202,7 +203,11 @@ export const RoutineHeader: React.FC = () => {
                 </DialogDescription>
               </DialogHeader>
               <RoutineForm
-                onSubmit={handleFormSubmit}
+                onSubmit={(data) =>
+                  handleFormSubmit(
+                    data as Omit<IRoutine, "_id" | "createdAt" | "updatedAt">
+                  )
+                }
                 onCancel={() => setIsRoutineFormOpen(false)}
               />
             </DialogContent>
